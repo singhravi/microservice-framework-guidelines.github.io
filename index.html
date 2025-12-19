@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enterprise Microservices Architecture</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+        color: white;
+        padding: 32px;
+      }
+
+      .header h1 {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        color: #bfdbfe;
+        font-size: 16px;
+      }
+
+      .tabs {
+        display: flex;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        overflow-x: auto;
+      }
+
+      .tab {
+        padding: 16px 24px;
+        font-weight: 500;
+        color: #6b7280;
+        background: none;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s;
+      }
+
+      .tab:hover {
+        color: #111827;
+        background: #f3f4f6;
+      }
+
+      .tab.active {
+        background: white;
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+      }
+
+      .content {
+        padding: 32px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .section-header svg {
+        width: 24px;
+        height: 24px;
+        color: #2563eb;
+      }
+
+      .section-header h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1f2937;
+      }
+
+      .info-box {
+        background: #eff6ff;
+        border-left: 4px solid #2563eb;
+        padding: 16px;
+        margin-bottom: 24px;
+        border-radius: 4px;
+      }
+
+      .info-box h3 {
+        font-weight: 600;
+        color: #1e3a8a;
+        margin-bottom: 8px;
+      }
+
+      .info-box ul {
+        list-style: none;
+      }
+
+      .info-box li {
+        color: #1e40af;
+        display: flex;
+        align-items: start;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+
+      .info-box li svg {
+        width: 16px;
+        height: 16px;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .grid-item {
+        background: #f9fafb;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .grid-item-title {
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 4px;
+      }
+
+      .grid-item-content {
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      .layer-box {
+        background: white;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        padding: 16px;
+      }
+
+      .layer-item {
+        display: flex;
+        align-items: start;
+        gap: 12px;
+        padding: 12px;
+        background: #f9fafb;
+        border-radius: 6px;
+        margin-bottom: 8px;
+      }
+
+      .layer-label {
+        width: 128px;
+        font-weight: 500;
+        font-size: 14px;
+        color: #374151;
+      }
+
+      .layer-components {
+        flex: 1;
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      .accordion {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+
+      .accordion-header {
+        background: #f9fafb;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .accordion-header:hover {
+        background: #f3f4f6;
+      }
+
+      .accordion-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .accordion-title svg {
+        width: 20px;
+        height: 20px;
+        color: #dc2626;
+      }
+
+      .accordion-title span {
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .accordion-icon {
+        color: #9ca3af;
+        font-size: 20px;
+      }
+
+      .accordion-content {
+        padding: 16px;
+        background: white;
+        display: none;
+      }
+
+      .accordion-content.active {
+        display: block;
+      }
+
+      .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .tag {
+        padding: 6px 12px;
+        background: #fee2e2;
+        color: #991b1b;
+        font-size: 14px;
+        border-radius: 16px;
+      }
+
+      .tag.green {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .tag.purple {
+        background: #f3e8ff;
+        color: #6b21a8;
+      }
+      .tag.orange {
+        background: #fed7aa;
+        color: #92400e;
+      }
+
+      .practice-list {
+        list-style: none;
+        margin-top: 8px;
+      }
+
+      .practice-list li {
+        font-size: 14px;
+        color: #6b7280;
+        display: flex;
+        align-items: start;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+
+      .strategy-box {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px;
+        background: white;
+        margin-bottom: 16px;
+      }
+
+      .strategy-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 8px;
+      }
+
+      .strategy-detail {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+
+      .footer {
+        background: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+        padding: 24px;
+      }
+
+      .footer-content {
+        display: flex;
+        align-items: start;
+        gap: 12px;
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      .footer-content svg {
+        width: 20px;
+        height: 20px;
+        color: #f59e0b;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .footer-title {
+        font-weight: 500;
+        color: #1f2937;
+        margin-bottom: 4px;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <h1>Enterprise Microservices Architecture</h1>
+          <p>
+            Open Source Framework with Built-in Security, Scalability &
+            Compliance
+          </p>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('overview')">
+            Architecture Overview
+          </button>
+          <button class="tab" onclick="switchTab('security')">
+            Cybersecurity Framework
+          </button>
+          <button class="tab" onclick="switchTab('scalability')">
+            Scalability Architecture
+          </button>
+          <button class="tab" onclick="switchTab('compliance')">
+            Compliance & Governance
+          </button>
+          <button class="tab" onclick="switchTab('maintainability')">
+            Maintainability & DevOps
+          </button>
+          <button class="tab" onclick="switchTab('implementation')">
+            Implementation Stack
+          </button>
+        </div>
+
+        <div class="content">
+          <!-- Overview Tab -->
+          <div id="overview-content" class="tab-content">
+            <div class="section-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z"
+                />
+              </svg>
+              <h2>Architecture Overview</h2>
+            </div>
+
+            <div class="info-box">
+              <h3>Core Principles</h3>
+              <ul>
+                <li>
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Domain-Driven Design (DDD) for service boundaries</span>
+                </li>
+                <li>
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>API-First approach with OpenAPI specifications</span>
+                </li>
+                <li>
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Event-Driven Architecture for async communication</span>
+                </li>
+                <li>
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Zero Trust Security model</span>
+                </li>
+                <li>
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Infrastructure as Code (IaC)</span>
+                </li>
+                <li>
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Observability by design</span>
+                </li>
+              </ul>
+            </div>
+
+            <h3 style="font-weight: 600; color: #1f2937; margin-bottom: 12px">
+              Technology Stack
+            </h3>
+            <div class="grid-2">
+              <div class="grid-item">
+                <div class="grid-item-title">Container Runtime</div>
+                <div class="grid-item-content">Docker, containerd</div>
+              </div>
+              <div class="grid-item">
+                <div class="grid-item-title">Orchestration</div>
+                <div class="grid-item-content">Kubernetes (K8s)</div>
+              </div>
+              <div class="grid-item">
+                <div class="grid-item-title">Service Mesh</div>
+                <div class="grid-item-content">Istio or Linkerd</div>
+              </div>
+              <div class="grid-item">
+                <div class="grid-item-title">API Gateway</div>
+                <div class="grid-item-content">Kong or Apache APISIX</div>
+              </div>
+              <div class="grid-item">
+                <div class="grid-item-title">Message Broker</div>
+                <div class="grid-item-content">Apache Kafka, RabbitMQ</div>
+              </div>
+              <div class="grid-item">
+                <div class="grid-item-title">Databases</div>
+                <div class="grid-item-content">PostgreSQL, MongoDB, Redis</div>
+              </div>
+            </div>
+
+            <div class="layer-box">
+              <h3 style="font-weight: 600; color: #1f2937; margin-bottom: 12px">
+                Reference Architecture Layers
+              </h3>
+              <div class="layer-item">
+                <div class="layer-label">Client Layer</div>
+                <div class="layer-components">
+                  Web Apps • Mobile Apps • Third-party Apps
+                </div>
+              </div>
+              <div class="layer-item">
+                <div class="layer-label">Edge Layer</div>
+                <div class="layer-components">
+                  CDN • Load Balancer • WAF • DDoS Protection
+                </div>
+              </div>
+              <div class="layer-item">
+                <div class="layer-label">API Layer</div>
+                <div class="layer-components">
+                  API Gateway (Kong) • Rate Limiting • Authentication
+                </div>
+              </div>
+              <div class="layer-item">
+                <div class="layer-label">Service Mesh</div>
+                <div class="layer-components">
+                  Istio Control Plane • Envoy Proxies • mTLS
+                </div>
+              </div>
+              <div class="layer-item">
+                <div class="layer-label">Business Layer</div>
+                <div class="layer-components">
+                  Microservices • Service Discovery • Circuit Breakers
+                </div>
+              </div>
+              <div class="layer-item">
+                <div class="layer-label">Data Layer</div>
+                <div class="layer-components">
+                  Databases • Cache • Message Queue
+                </div>
+              </div>
+              <div class="layer-item">
+                <div class="layer-label">Platform Layer</div>
+                <div class="layer-components">
+                  Kubernetes • Monitoring • Logging • CI/CD
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Tab -->
+          <div id="security-content" class="tab-content hidden">
+            <div class="section-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+              <h2>Cybersecurity Framework</h2>
+            </div>
+
+            <div class="accordion" id="acc-iam">
+              <div class="accordion-header" onclick="toggleAccordion('iam')">
+                <div class="accordion-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <span>Identity & Access Management</span>
+                </div>
+                <span class="accordion-icon">+</span>
+              </div>
+              <div class="accordion-content" id="iam-content">
+                <div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Tools:
+                  </div>
+                  <div class="tag-container">
+                    <span class="tag">Keycloak (OAuth2/OIDC)</span>
+                    <span class="tag">HashiCorp Vault (secrets)</span>
+                    <span class="tag">cert-manager (TLS)</span>
+                  </div>
+                </div>
+                <div style="margin-top: 12px">
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Practices:
+                  </div>
+                  <ul class="practice-list">
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>JWT token-based auth</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>mTLS between services</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>RBAC and ABAC policies</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion" id="acc-api">
+              <div class="accordion-header" onclick="toggleAccordion('api')">
+                <div class="accordion-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <span>API Security</span>
+                </div>
+                <span class="accordion-icon">+</span>
+              </div>
+              <div class="accordion-content" id="api-content">
+                <div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Tools:
+                  </div>
+                  <div class="tag-container">
+                    <span class="tag">Kong with rate limiting</span>
+                    <span class="tag">OWASP ZAP for testing</span>
+                    <span class="tag">ModSecurity WAF</span>
+                  </div>
+                </div>
+                <div style="margin-top: 12px">
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Practices:
+                  </div>
+                  <ul class="practice-list">
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>API key management</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Request validation</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>DDoS protection</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion" id="acc-data">
+              <div class="accordion-header" onclick="toggleAccordion('data')">
+                <div class="accordion-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <span>Data Security (India Context)</span>
+                </div>
+                <span class="accordion-icon">+</span>
+              </div>
+              <div class="accordion-content" id="data-content">
+                <div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Tools:
+                  </div>
+                  <div class="tag-container">
+                    <span class="tag">Vault for encryption keys</span>
+                    <span class="tag">PostgreSQL with TDE</span>
+                    <span class="tag">Ceph for encrypted storage</span>
+                    <span class="tag">Tokenization services for card data</span>
+                  </div>
+                </div>
+                <div style="margin-top: 12px">
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Practices:
+                  </div>
+                  <ul class="practice-list">
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Encryption at rest and in transit</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Data masking and tokenization</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>PII protection per DPDPA 2023</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Data localization for payment systems</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Cross-border data transfer controls</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion" id="acc-runtime">
+              <div
+                class="accordion-header"
+                onclick="toggleAccordion('runtime')"
+              >
+                <div class="accordion-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                  <span>Runtime Security</span>
+                </div>
+                <span class="accordion-icon">+</span>
+              </div>
+              <div class="accordion-content" id="runtime-content">
+                <div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Tools:
+                  </div>
+                  <div class="tag-container">
+                    <span class="tag">Falco (threat detection)</span>
+                    <span class="tag">Trivy (vulnerability scanning)</span>
+                    <span class="tag">Open Policy Agent</span>
+                  </div>
+                </div>
+                <div style="margin-top: 12px">
+                  <div
+                    style="
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #374151;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Practices:
+                  </div>
+                  <ul class="practice-list">
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Container scanning</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Network policies</span>
+                    </li>
+                    <li>
+                      <span style="color: #dc2626; margin-top: 2px">•</span
+                      ><span>Security policies as code</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scalability Tab -->
+          <div id="scalability-content" class="tab-content hidden">
+            <div class="section-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                />
+              </svg>
+              <h2>Scalability Architecture</h2>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">Horizontal Scaling</div>
+              <div class="strategy-detail">
+                <strong>Implementation:</strong> Kubernetes HPA (CPU/Memory) and
+                KEDA (event-driven)
+              </div>
+              <div class="strategy-detail">
+                <strong>Pattern:</strong> Stateless services with load balancing
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">Database Scaling</div>
+              <div class="strategy-detail">
+                <strong>Implementation:</strong> Read replicas, sharding, CQRS
+                pattern
+              </div>
+              <div class="strategy-detail">
+                <strong>Pattern:</strong> Vitess for MySQL, Citus for PostgreSQL
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">Caching Strategy</div>
+              <div class="strategy-detail">
+                <strong>Implementation:</strong> Redis cluster with persistence,
+                CDN for static content
+              </div>
+              <div class="strategy-detail">
+                <strong>Pattern:</strong> Multi-tier caching (L1: in-memory, L2:
+                Redis, L3: DB)
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">Async Processing</div>
+              <div class="strategy-detail">
+                <strong>Implementation:</strong> Kafka for event streaming,
+                Celery for task queues
+              </div>
+              <div class="strategy-detail">
+                <strong>Pattern:</strong> Event sourcing and saga pattern for
+                distributed transactions
+              </div>
+            </div>
+
+            <div
+              class="info-box"
+              style="background: #d1fae5; border-left-color: #10b981"
+            >
+              <h3 style="color: #065f46">Monitoring & Autoscaling</h3>
+              <ul>
+                <li>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  <span style="color: #047857">Prometheus for metrics</span>
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  <span style="color: #047857">Grafana for visualization</span>
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  <span style="color: #047857">Horizontal Pod Autoscaler</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Compliance Tab -->
+          <div id="compliance-content" class="tab-content hidden">
+            <div class="section-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h2>Compliance & Governance</h2>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">DPDPA 2023 (India)</div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Tools:
+                </div>
+                <div class="tag-container">
+                  <span class="tag purple">Consent management platform</span>
+                  <span class="tag purple">Data classification engine</span>
+                  <span class="tag purple">Apache Ranger for governance</span>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Key Requirements:
+                </div>
+                <div class="grid-2">
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Consent-based or legitimate use processing</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Privacy notices in 22 Indian languages</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span
+                      >Data principal rights (access, correction, erasure)</span
+                    >
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Children's data protection (under 18)</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Breach notification to Data Protection Board</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Data localization for payments (RBI mandate)</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Cross-border transfer restrictions</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">GDPR/International Data Privacy</div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Tools:
+                </div>
+                <div class="tag-container">
+                  <span class="tag purple"
+                    >Apache Ranger for data governance</span
+                  >
+                  <span class="tag purple">Data classification tags</span>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Key Requirements:
+                </div>
+                <div class="grid-2">
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Right to erasure</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Data portability</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Consent management</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Audit logs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">SOC2/ISO27001</div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Tools:
+                </div>
+                <div class="tag-container">
+                  <span class="tag purple"
+                    >OpenSCAP for compliance scanning</span
+                  >
+                  <span class="tag purple">Audit2DB for log retention</span>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Key Requirements:
+                </div>
+                <div class="grid-2">
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Access controls</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Encryption</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Incident response</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Business continuity</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">PCI-DSS & RBI Payment Security</div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Tools:
+                </div>
+                <div class="tag-container">
+                  <span class="tag purple">Network segmentation</span>
+                  <span class="tag purple">Tokenization services</span>
+                  <span class="tag purple">India-based data storage</span>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    margin: 12px 0 8px;
+                  "
+                >
+                  Key Requirements:
+                </div>
+                <div class="grid-2">
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Cardholder data protection</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Secure transmission</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Regular testing</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Payment data stored only in India</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>24-hour data repatriation if processed abroad</span>
+                  </div>
+                  <div
+                    style="
+                      font-size: 14px;
+                      color: #6b7280;
+                      display: flex;
+                      align-items: start;
+                      gap: 8px;
+                    "
+                  >
+                    <svg
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        color: #9333ea;
+                        margin-top: 2px;
+                        flex-shrink: 0;
+                      "
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>Card-on-File Tokenization (CoFT)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="info-box"
+              style="background: #f3e8ff; border-left-color: #9333ea"
+            >
+              <h3 style="color: #6b21a8">Auditability</h3>
+              <ul style="list-style: disc; padding-left: 20px; color: #7c3aed">
+                <li>ELK Stack for centralized logging</li>
+                <li>Immutable audit trails</li>
+                <li>Compliance reports automation</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Maintainability Tab -->
+          <div id="maintainability-content" class="tab-content hidden">
+            <div class="section-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <h2>Maintainability & DevOps</h2>
+            </div>
+
+            <div>
+              <h3 style="font-weight: 600; color: #1f2937; margin-bottom: 12px">
+                CI/CD Pipeline
+              </h3>
+              <div class="grid-2">
+                <div class="grid-item">
+                  GitLab CI/CD or Jenkins for pipelines
+                </div>
+                <div class="grid-item">ArgoCD for GitOps deployment</div>
+                <div class="grid-item">SonarQube for code quality</div>
+                <div class="grid-item">Trivy for security scanning</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px">
+              <h3 style="font-weight: 600; color: #1f2937; margin-bottom: 12px">
+                Observability Stack
+              </h3>
+
+              <div class="strategy-box">
+                <div class="strategy-title">Logging</div>
+                <div class="strategy-detail">
+                  <strong>Stack:</strong> ELK Stack (Elasticsearch, Logstash,
+                  Kibana) or Loki
+                </div>
+                <div class="strategy-detail">
+                  <strong>Practice:</strong> Structured logging with correlation
+                  IDs
+                </div>
+              </div>
+
+              <div class="strategy-box">
+                <div class="strategy-title">Monitoring</div>
+                <div class="strategy-detail">
+                  <strong>Stack:</strong> Prometheus + Grafana, Thanos for
+                  long-term storage
+                </div>
+                <div class="strategy-detail">
+                  <strong>Practice:</strong> RED metrics (Rate, Errors,
+                  Duration) and USE (Utilization, Saturation, Errors)
+                </div>
+              </div>
+
+              <div class="strategy-box">
+                <div class="strategy-title">Tracing</div>
+                <div class="strategy-detail">
+                  <strong>Stack:</strong> Jaeger or Zipkin with OpenTelemetry
+                </div>
+                <div class="strategy-detail">
+                  <strong>Practice:</strong> Distributed tracing across all
+                  services
+                </div>
+              </div>
+
+              <div class="strategy-box">
+                <div class="strategy-title">Alerting</div>
+                <div class="strategy-detail">
+                  <strong>Stack:</strong> Alertmanager, PagerDuty integration
+                </div>
+                <div class="strategy-detail">
+                  <strong>Practice:</strong> SLO-based alerting, runbook
+                  automation
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="info-box"
+              style="
+                background: #e0e7ff;
+                border-left-color: #6366f1;
+                margin-top: 24px;
+              "
+            >
+              <h3 style="color: #3730a3">Documentation Standards</h3>
+              <ul style="list-style: disc; padding-left: 20px; color: #4f46e5">
+                <li>Swagger/OpenAPI for APIs</li>
+                <li>Architecture Decision Records (ADRs)</li>
+                <li>README-driven development</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Implementation Tab -->
+          <div id="implementation-content" class="tab-content hidden">
+            <div class="section-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                />
+              </svg>
+              <h2>Implementation Stack</h2>
+            </div>
+
+            <h3 style="font-weight: 600; color: #1f2937; margin-bottom: 12px">
+              Service Stack
+            </h3>
+
+            <div class="strategy-box">
+              <div class="strategy-title">Backend Services</div>
+              <div class="strategy-detail">
+                <strong>Languages:</strong> Go, Java/Spring Boot,
+                Python/FastAPI, Node.js/NestJS
+              </div>
+              <div class="strategy-detail">
+                <strong>Note:</strong> Choose based on team expertise and use
+                case
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">API Gateway</div>
+              <div class="strategy-detail">
+                <strong>Tool:</strong> Kong Gateway (OSS)
+              </div>
+              <div class="strategy-detail">
+                <strong>Features:</strong> Rate limiting, authentication,
+                transformation, analytics
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">Service Mesh</div>
+              <div class="strategy-detail"><strong>Tool:</strong> Istio</div>
+              <div class="strategy-detail">
+                <strong>Features:</strong> mTLS, traffic management,
+                observability, resilience
+              </div>
+            </div>
+
+            <div class="strategy-box">
+              <div class="strategy-title">Data Layer</div>
+              <div style="margin-top: 8px">
+                <div class="tag-container">
+                  <span class="tag" style="background: #f3f4f6; color: #374151"
+                    >PostgreSQL (relational)</span
+                  >
+                  <span class="tag" style="background: #f3f4f6; color: #374151"
+                    >MongoDB (document)</span
+                  >
+                  <span class="tag" style="background: #f3f4f6; color: #374151"
+                    >Redis (cache/session)</span
+                  >
+                  <span class="tag" style="background: #f3f4f6; color: #374151"
+                    >Elasticsearch (search)</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="info-box"
+              style="
+                background: #fed7aa;
+                border-left-color: #f97316;
+                margin-top: 24px;
+              "
+            >
+              <h3 style="color: #92400e">Infrastructure</h3>
+              <ul>
+                <li
+                  style="
+                    color: #9a3412;
+                    display: flex;
+                    align-items: start;
+                    gap: 8px;
+                  "
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      margin-top: 2px;
+                      flex-shrink: 0;
+                    "
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                    />
+                  </svg>
+                  <span
+                    >Kubernetes cluster (EKS, GKE, AKS, or self-hosted in India
+                    data centers)</span
+                  >
+                </li>
+                <li
+                  style="
+                    color: #9a3412;
+                    display: flex;
+                    align-items: start;
+                    gap: 8px;
+                  "
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      margin-top: 2px;
+                      flex-shrink: 0;
+                    "
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                    />
+                  </svg>
+                  <span>Terraform for IaC</span>
+                </li>
+                <li
+                  style="
+                    color: #9a3412;
+                    display: flex;
+                    align-items: start;
+                    gap: 8px;
+                  "
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      margin-top: 2px;
+                      flex-shrink: 0;
+                    "
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                    />
+                  </svg>
+                  <span>Helm charts for application deployment</span>
+                </li>
+                <li
+                  style="
+                    color: #9a3412;
+                    display: flex;
+                    align-items: start;
+                    gap: 8px;
+                  "
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      margin-top: 2px;
+                      flex-shrink: 0;
+                    "
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                    />
+                  </svg>
+                  <span>GitLab/GitHub for source control</span>
+                </li>
+                <li
+                  style="
+                    color: #9a3412;
+                    display: flex;
+                    align-items: start;
+                    gap: 8px;
+                  "
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      margin-top: 2px;
+                      flex-shrink: 0;
+                    "
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+                    />
+                  </svg>
+                  <span
+                    >India region deployment for regulated data (payments,
+                    insurance, telecom)</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="footer-content">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div>
+              <div class="footer-title">Implementation Guidance</div>
+              <p>
+                Start with a pilot microservice, establish patterns, then scale.
+                Use feature flags for gradual rollouts. Invest in developer
+                tooling and documentation from day one. Consider managed
+                services for complex components like service mesh initially.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentTab = "overview";
+      let expandedAccordion = null;
+
+      function switchTab(tabName) {
+        // Hide all content
+        document.querySelectorAll(".tab-content").forEach((content) => {
+          content.classList.add("hidden");
+        });
+
+        // Remove active class from all tabs
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+
+        // Show selected content and activate tab
+        document
+          .getElementById(tabName + "-content")
+          .classList.remove("hidden");
+        event.target.classList.add("active");
+
+        currentTab = tabName;
+        expandedAccordion = null;
+      }
+
+      function toggleAccordion(id) {
+        const content = document.getElementById(id + "-content");
+        const header = event.currentTarget;
+        const icon = header.querySelector(".accordion-icon");
+
+        if (expandedAccordion === id) {
+          content.classList.remove("active");
+          icon.textContent = "+";
+          expandedAccordion = null;
+        } else {
+          // Close previously opened accordion
+          if (expandedAccordion) {
+            document
+              .getElementById(expandedAccordion + "-content")
+              .classList.remove("active");
+            document
+              .querySelectorAll(".accordion-icon")
+              .forEach((i) => (i.textContent = "+"));
+          }
+
+          content.classList.add("active");
+          icon.textContent = "−";
+          expandedAccordion = id;
+        }
+      }
+    </script>
+  </body>
+</html>
